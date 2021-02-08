@@ -35,9 +35,9 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         {
             { typeof(Vector2Control), typeof(Vector2InputActionAdaptor) },
             { typeof(ButtonControl), typeof(ButtonInputActionAdaptor) },
-            { typeof(int), typeof(IntegerInputActionAdaptor) },
-            { typeof(float), typeof(FloatInputActionAdaptor) },
-            { typeof(double), typeof(DoubleInputActionAdaptor) }
+            { typeof(IntegerControl), typeof(IntegerInputActionAdaptor) },
+            { typeof(AxisControl), typeof(FloatInputActionAdaptor) },
+            { typeof(DoubleControl), typeof(DoubleInputActionAdaptor) }
         };
 
         string m_LayoutName;
@@ -67,7 +67,7 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
 
             m_InputAsset.Disable();
             m_Actuators = GenerateActionActuatorsFromAsset(
-                m_InputAsset,
+                m_InputAsset.FindActionMap(m_PlayerInput.defaultActionMap),
                 m_LayoutName,
                 m_LocalId,
                 m_BehaviorParameters,
@@ -169,7 +169,7 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         }
 
         static IActuator[] GenerateActionActuatorsFromAsset(
-            InputActionAsset asset,
+            InputActionMap defaultMap,
             string layoutName,
             uint localId,
             BehaviorParameters behaviorParameters,
@@ -182,7 +182,7 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
 
             var actuators = new List<IActuator>();
 
-            foreach (var action in asset)
+            foreach (var action in defaultMap)
             {
 
                 var actionLayout = InputSystem.LoadLayout(action.expectedControlType);

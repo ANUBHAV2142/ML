@@ -15,13 +15,8 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         public void QueueInputEventForAction(InputAction action, InputControl control, ActionSpec actionSpec, in ActionBuffers actionBuffers)
         {
             var val = actionBuffers.ContinuousActions[0];
-
-            using (StateEvent.From(control.device, out var eventPtr))
-            {
-                control.WriteValueIntoEvent((double)val, eventPtr);
-                InputSystem.QueueEvent(eventPtr);
-                InputSystem.Update();
-            }
+            InputSystem.QueueDeltaStateEvent(control, (double)val);
+            InputSystem.Update();
         }
 
         public void WriteToHeuristic(InputAction action, in ActionBuffers actionBuffers)

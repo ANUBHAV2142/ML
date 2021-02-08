@@ -17,12 +17,8 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         {
             var val = actionBuffers.DiscreteActions[0];
 
-            using (StateEvent.From(control.device, out var eventPtr))
-            {
-                control.WriteValueIntoEvent(val, eventPtr);
-                InputSystem.QueueEvent(eventPtr);
-                InputSystem.Update();
-            }
+            InputSystem.QueueDeltaStateEvent(control, val);
+            InputSystem.Update();
         }
 
         public void WriteToHeuristic(InputAction action, in ActionBuffers actionBuffers)
