@@ -17,7 +17,11 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         {
             var val = actionBuffers.DiscreteActions[0];
 
-            InputSystem.QueueDeltaStateEvent(control, val);
+            using (StateEvent.From(control.device, out var eventPtr))
+            {
+                control.WriteValueIntoEvent(val, eventPtr);
+                InputSystem.QueueEvent(eventPtr);
+            }
             InputSystem.Update();
         }
 

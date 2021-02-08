@@ -2,6 +2,7 @@
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 namespace Unity.MLAgents.Extensions.Runtime.Input
 {
@@ -15,7 +16,11 @@ namespace Unity.MLAgents.Extensions.Runtime.Input
         public void QueueInputEventForAction(InputAction action, InputControl control, ActionSpec actionSpec, in ActionBuffers actionBuffers)
         {
             var val = actionBuffers.DiscreteActions[0];
-            InputSystem.QueueDeltaStateEvent(control, (byte)val);
+            using (StateEvent.From(control.device, out var eventPtr))
+            {
+                control.WriteValueIntoEvent((float)val, eventPtr);
+                InputSystem.QueueEvent(eventPtr);
+            }
             InputSystem.Update();
         }
 
